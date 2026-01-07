@@ -1,0 +1,152 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="section-padding" id="booking">
+                <div class="container">
+                    <div class="row">
+                    
+                        <div class="col-lg-112 col-12 mx-auto">
+                            <div class="booking-form">
+                                
+                                <h2 class="text-center mb-lg-3 mb-2">View Patient</h2>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="text-center text-warning">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if request.user.is_superuser %}
+                                <a href="{% url 'add_patient' %}" class="btn btn-primary btn-sm my-2">Add Patient</a>
+                                {% endif %}
+                            
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Full Name</th>
+                                        <th scope="col">Gender</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Date</th>
+                                        {% if not request.user.is_superuser %}
+                                        <th scope="col">Action</th>
+                                        {% else %}
+                                        <th scope="col">Action</th>
+                                        {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in result %}
+                                        <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ i.name }}({{i.age}})</td>
+                                        <td>{{ i.gender }}</td>
+                                        <td>{{ i.description }}</td>
+                                        <td>{{ i.date }}</td>
+                                        {% if not request.user.is_superuser %}
+                                        {% comment %} <td><a href="" class="btn btn-primary btn-sm">ICD</a></td> {% endcomment %}
+                                        <td><button 
+                                            class="btn btn-primary btn-sm icd-btn"
+                                            data-description="{{ i.description }}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#icdModal">
+                                            ICD
+                                        </button>
+                                        </td>
+                                        {% else %}
+                                        <td>
+                                          <a href="{% url 'edit_patient' i.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                          <a href="{% url 'delete_patient' i.id %}" class="btn btn-danger btn-sm">Delete</a>
+                                        </td>
+                                        {% endif %}
+
+                                        
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">No Data</td>
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                    </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ICD Modal -->
+<div class="modal fade" id="icdModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">ICD Prediction</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div id="icd-loading" class="text-center my-3" style="display:none;">
+          <div class="spinner-border"></div>
+          <p>Predicting ICD codes...</p>
+        </div>
+
+        <table class="table table-bordered" id="icd-table" style="display:none;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ICD Code</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="icd-result-body"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+document.querySelectorAll(".icd-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+        const description = this.dataset.description;
+
+        document.getElementById("icd-loading").style.display = "block";
+        document.getElementById("icd-table").style.display = "none";
+        document.getElementById("icd-result-body").innerHTML = "";
+
+        fetch("{% url 'icd_ajax_predict' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ description: description })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("icd-loading").style.display = "none";
+            document.getElementById("icd-table").style.display = "table";
+
+            data.results.forEach((item, index) => {
+                document.getElementById("icd-result-body").innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.code}</td>
+                        <td>${item.score.toFixed(4)}</td>
+                    </tr>
+                `;
+            });
+        });
+    });
+});
+</script>
+
+
+
+{% include 'footer.html' %}

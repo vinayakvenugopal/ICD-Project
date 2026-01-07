@@ -1,0 +1,48 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="section-padding" id="booking">
+                <div class="container">
+                    <div class="row">
+                    
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <div class="booking-form">
+                                
+                                <h2 class="text-center mb-lg-3 mb-2">View Feedback</h2>
+                            
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Full Name</th>
+                                        <th scope="col">Message</th>
+                                        <th scope="col">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in user %}
+                                        <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ i.user.fullname }}</td>
+                                        <td>{{ i.message }}</td>
+                                        <td>{{ i.date }}</td>
+                                        
+                                        
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">No Data</td>
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                    </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+{% include 'footer.html' %}

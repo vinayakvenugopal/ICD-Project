@@ -1,0 +1,60 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="section-padding" id="booking">
+                <div class="container">
+                    <div class="row">
+                    
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <div class="booking-form">
+                                
+                                <h2 class="text-center mb-lg-3 mb-2">Add Patient Details</h2>
+                            
+                                <form role="form" action="#booking" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        
+                                        <div class="col-lg-6 col-12">
+                                            <input type="text" name="name" id="name" class="form-control" placeholder="Full name" required>
+                                        </div>
+
+                                        <div class="col-lg-6 col-12">
+                                            <input type="text" name="age" id="age"  class="form-control" placeholder="Age..." required>
+                                        </div>
+
+                                        
+
+                                        
+                                        <div class="col-lg-6 col-12">
+                                            <select name="gender" id="gender" class="form-control">
+                                                <option value="" disabled selected>Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        
+                                        <div class="col-lg-6 col-12">
+                                            <textarea name="description" class="form-control" placeholder="Description..."></textarea>
+                                            
+                                        </div>
+
+                                        <!-- <div class="col-12">
+                                            <textarea class="form-control" rows="5" id="message" name="message" placeholder="Additional Message"></textarea>
+                                        </div> -->
+
+                                        <div class="col-lg-3 col-md-4 col-6 mx-auto">
+                                            <button type="submit" class="form-control" id="submit-button">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+{% include 'footer.html' %}

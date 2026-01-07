@@ -1,0 +1,43 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="section-padding" id="booking">
+                <div class="container">
+                    <div class="row">
+                    
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <div class="booking-form">
+                                
+                                <h2 class="text-center mb-lg-3 mb-2">Feedback</h2>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="text-center text-warning">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            
+                                <form role="form" action="" method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        
+
+
+                                        <div class=" col-12">
+                                            <textarea name="message" class="form-control" placeholder="feedback..."></textarea>
+                                            
+                                        </div>
+
+
+                                        <div class="col-lg-3 col-md-4 col-6 mx-auto">
+                                            <button type="submit" class="form-control" id="submit-button">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+{% include 'footer.html' %}

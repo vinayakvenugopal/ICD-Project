@@ -1,0 +1,49 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="section-padding" id="booking">
+                <div class="container">
+                    <div class="row">
+                    
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <div class="booking-form">
+                                
+                                <h2 class="text-center mb-lg-3 mb-2">Login</h2>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="text-center text-warning">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            
+                                <form role="form" action="#booking" method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        
+
+                                        <div class="col-lg-6 col-12">
+                                            <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required>
+                                        </div>
+
+                                        
+
+                                        <div class="col-lg-6 col-12">
+                                            <input type="password" name="password" id="date" value="" class="form-control" placeholder="Password">
+                                            
+                                        </div>
+
+                                        
+
+                                        <div class="col-lg-3 col-md-4 col-6 mx-auto">
+                                            <button type="submit" class="form-control" id="submit-button">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+{% include 'footer.html' %}
