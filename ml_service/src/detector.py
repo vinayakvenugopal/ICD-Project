@@ -3,18 +3,8 @@ import torch.nn as nn
 import pickle
 import os
 import pandas as pd
-import nltk
-from nltk.corpus import wordnet
 from src.data_loader import DataLoader
 from src.models.bilstm_model import BiLSTMEncoder, Vocab
-
-# Ensure NLTK data is downloaded
-try:
-    wordnet.ensure_loaded()
-except:
-    nltk.download('wordnet', quiet=True)
-    nltk.download('omw-1.4', quiet=True)
-    nltk.download('punkt', quiet=True)
 
 class ICD10Detector:
     def __init__(self, data_path=None):
@@ -39,7 +29,7 @@ class ICD10Detector:
             self.vocab = metadata['vocab']
             
         self.model = BiLSTMEncoder(vocab_size=len(self.vocab))
-        self.model.load_state_dict(torch.load(self.weight_path))
+        self.model.load_state_dict(torch.load(self.weight_path, map_location=torch.device("cpu")))
         self.model.eval()
         
         print(f"Pre-computing embeddings for {len(self.descriptions)} codes...")

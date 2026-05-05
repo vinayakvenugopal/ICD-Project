@@ -89,6 +89,7 @@
           <div class="spinner-border"></div>
           <p>Predicting ICD codes...</p>
         </div>
+        <div id="icd-error" class="alert alert-danger" style="display:none;"></div>
 
         <table class="table table-bordered" id="icd-table" style="display:none;">
           <thead>
@@ -115,6 +116,8 @@
 
       document.getElementById("icd-loading").style.display = "block";
       document.getElementById("icd-table").style.display = "none";
+      document.getElementById("icd-error").style.display = "none";
+      document.getElementById("icd-error").textContent = "";
       document.getElementById("icd-result-body").innerHTML = "";
 
       fetch("{% url 'icd_ajax_predict' %}", {
@@ -128,7 +131,21 @@
         .then(res => res.json())
         .then(data => {
           document.getElementById("icd-loading").style.display = "none";
+          if (data.error) {
+            document.getElementById("icd-error").textContent = data.error;
+            document.getElementById("icd-error").style.display = "block";
+            return;
+          }
+
           document.getElementById("icd-table").style.display = "table";
+          if (!data.results || data.results.length === 0) {
+            document.getElementById("icd-result-body").innerHTML = `
+              <tr>
+                <td colspan="3" class="text-center">No ICD match found</td>
+              </tr>
+            `;
+            return;
+          }
 
           data.results.forEach((item, index) => {
             document.getElementById("icd-result-body").innerHTML += `
@@ -140,6 +157,11 @@
     `;
           });
 
+        })
+        .catch(error => {
+          document.getElementById("icd-loading").style.display = "none";
+          document.getElementById("icd-error").textContent = error;
+          document.getElementById("icd-error").style.display = "block";
         });
     });
   });
