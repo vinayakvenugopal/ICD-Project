@@ -24,6 +24,9 @@ def _format_code(raw_code):
 
 def _load_detector():
     global _detector, _detector_error
+    if os.environ.get("USE_NEURAL_ICD", "False").lower() != "true":
+        return None
+
     if _detector is not None or _detector_error is not None:
         return _detector
 

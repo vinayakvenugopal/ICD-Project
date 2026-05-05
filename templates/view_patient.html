@@ -137,7 +137,15 @@
         },
         body: JSON.stringify({ description: description })
       })
-        .then(res => res.json())
+        .then(res => {
+          return res.text().then(text => {
+            try {
+              return JSON.parse(text);
+            } catch (error) {
+              throw new Error(`Server returned ${res.status}: ${text.replace(/<[^>]*>/g, " ").trim().slice(0, 300)}`);
+            }
+          });
+        })
         .then(data => {
           document.getElementById("icd-loading").style.display = "none";
           if (data.error) {
