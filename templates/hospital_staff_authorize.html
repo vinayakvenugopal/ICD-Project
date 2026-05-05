@@ -1,54 +1,54 @@
 {% load static %}
 {% include 'header.html' %}
 
-<section class="section-padding" id="booking">
-                <div class="container">
-                    <div class="row">
-                    
-                        <div class="col-lg-8 col-12 mx-auto">
-                            <div class="booking-form">
-                                
-                                <h2 class="text-center mb-lg-3 mb-2">Hospital Staff</h2>
-                            
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">ID Proof</th>
-                                        <th scope="col">Full Name</th>
-                                        <th scope="col">email</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for i in result %}
-                                        <tr>
-                                        <th scope="row">{{ forloop.counter }}</th>
-                                        <td><a href="{{ i.id_proof.url }}" download>Download</a></td>
-                                        <td>{{ i.fullname }}({{ i.gender }})</td>
-                                        <td>{{ i.email }}</td>
-                                        <td>{{ i.date_joined }}</td>
-                                        <td>
-                                            <a href="{% url 'accept' i.id %}" class="btn btn-success btn-sm">Accept</a>
-                                            <a href="{% url 'reject' i.id %}" class="btn btn-danger btn-sm">Reject</a>
-                                        </td>
-                                        
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="6" class="text-center">No Data</td>
-                                        </tr>
-                                        {% endfor %}
-                                        
-                                    </tbody>
-                                    </table>
+<section class="section-padding" id="staff-auth-section">
+    <div class="container">
+        <div class="row">
 
-                            </div>
-                        </div>
+            <div class="col-lg-8 col-12 mx-auto">
+                <div class="activity-form">
 
-                    </div>
+                    <h2 class="text-center mb-lg-3 mb-2">Hospital Staff</h2>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">ID Proof</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">email</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in result %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td><a href="{{ i.id_proof.url }}" download>Download</a></td>
+                                <td>{{ i.fullname }}({{ i.gender }})</td>
+                                <td>{{ i.email }}</td>
+                                <td>{{ i.date_joined }}</td>
+                                <td>
+                                    <a href="{% url 'accept' i.id %}" class="btn btn-success btn-sm">Accept</a>
+                                    <a href="{% url 'reject' i.id %}" class="btn btn-danger btn-sm">Reject</a>
+                                </td>
+
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No Data</td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
                 </div>
-            </section>
+            </div>
+
+        </div>
+    </div>
+</section>
 
 {% include 'footer.html' %}

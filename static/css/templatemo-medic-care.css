@@ -699,10 +699,10 @@ strong {
 }
 
 /*---------------------------------------
-  BOOKING FORM            
+  ACTIVITY FORM            
 -----------------------------------------*/
 
-.booking-form .form-control {
+.activity-form .form-control {
   background: transparent;
   border-radius: 0;
   border: 0;
@@ -715,7 +715,7 @@ strong {
   transition: all 0.3s;
 }
 
-.booking-form #submit-button {
+.activity-form #submit-button {
   background: var(--dark-color);
   border-bottom: 0;
   font-weight: var(--font-weight-semibold);
@@ -724,7 +724,7 @@ strong {
   margin-top: 35px;
 }
 
-.booking-form #submit-button:hover {
+.activity-form #submit-button:hover {
   background: var(--primary-color);
 }
 

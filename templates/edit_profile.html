@@ -1,79 +1,79 @@
 {% load static %}
 {% include 'header.html' %}
 
-<section class="section-padding" id="booking">
-                <div class="container">
-                    <div class="row">
-                    
-                        <div class="col-lg-8 col-12 mx-auto">
-                            <div class="booking-form">
-                                
-                                <h2 class="text-center mb-lg-3 mb-2">Edit Profile</h2>
-                            
-                                <form role="form" action="#booking" method="post" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <div class="row">
-                                        <div class="col-lg-6 col-12">
-                                            <label>Profile</label>
-                                            <input type="file" name="profile"  id="name" class="form-control" placeholder="Profile" >
-                                        </div>
-                                        <div class="col-lg-6 col-12">
-                                            <label>Id Proof</label>
-                                            <input type="file" name="id_proof" id="date" value="" class="form-control" placeholder="id_proof">
-                                            
-                                        </div>
-                                        <div class="col-lg-6 col-12">
-                                            <input type="text" name="name" value="{{user.fullname}}" id="name" class="form-control" placeholder="Full name" >
-                                        </div>
+<section class="section-padding" id="profile-section">
+    <div class="container">
+        <div class="row">
 
-                                        <div class="col-lg-6 col-12">
-                                            <input type="email" name="email" value="{{user.email}}" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" >
-                                        </div>
+            <div class="col-lg-8 col-12 mx-auto">
+                <div class="activity-form">
 
-                                        <div class="col-lg-6 col-12">
-                                            <input type="text" name="phone" value="{{user.phone}}" id="phone" class="form-control" placeholder="Phone: 123-456-7890">
-                                        </div>
+                    <h2 class="text-center mb-lg-3 mb-2">Edit Profile</h2>
 
-                                        <div class="col-lg-6 col-12">
-                                            <input
-                                                type="text"
-                                                name="dob"
-                                                value="{{ user.dob|date:'Y-m-d' }}"
-                                                class="form-control"
-                                                placeholder="Date of Birth"
-                                                onfocus="this.type='date'"
-                                                onblur="if(!this.value) this.type='text'" required>
-                                        </div>
-                                        <div class="col-lg-12 col-12">
-                                            <select name="gender" id="gender" class="form-control" required>
-                                                <option value="" disabled selected>Select Gender</option>
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-12 col-12">
-                                            <input type="password" name="password" id="phone" class="form-control" placeholder="update your password...">
-                                        </div>
+                    <form role="form" action="." method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-lg-6 col-12">
+                                <label>Profile</label>
+                                <input type="file" name="profile" id="name" class="form-control" placeholder="Profile">
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <label>Id Proof</label>
+                                <input type="file" name="id_proof" id="date" value="" class="form-control"
+                                    placeholder="id_proof">
 
-                                        
-                                        
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <input type="text" name="name" value="{{user.fullname}}" id="name" class="form-control"
+                                    placeholder="Full name">
+                            </div>
 
-                                        <!-- <div class="col-12">
+                            <div class="col-lg-6 col-12">
+                                <input type="email" name="email" value="{{user.email}}" id="email"
+                                    pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address">
+                            </div>
+
+                            <div class="col-lg-6 col-12">
+                                <input type="text" name="phone" value="{{user.phone}}" id="phone" class="form-control"
+                                    placeholder="Phone: 123-456-7890">
+                            </div>
+
+                            <div class="col-lg-6 col-12">
+                                <input type="text" name="dob" value="{{ user.dob|date:'Y-m-d' }}" class="form-control"
+                                    placeholder="Date of Birth" onfocus="this.type='date'"
+                                    onblur="if(!this.value) this.type='text'" required>
+                            </div>
+                            <div class="col-lg-12 col-12">
+                                <select name="gender" id="gender" class="form-control" required>
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-12 col-12">
+                                <input type="password" name="password" id="phone" class="form-control"
+                                    placeholder="update your password...">
+                            </div>
+
+
+
+
+                            <!-- <div class="col-12">
                                             <textarea class="form-control" rows="5" id="message" name="message" placeholder="Additional Message"></textarea>
                                         </div> -->
 
-                                        <div class="col-lg-3 col-md-4 col-6 mx-auto">
-                                            <button type="submit" class="form-control" id="submit-button">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
-
+                            <div class="col-lg-3 col-md-4 col-6 mx-auto">
+                                <button type="submit" class="form-control" id="submit-button">Submit</button>
                             </div>
                         </div>
+                    </form>
 
-                    </div>
                 </div>
-            </section>
+            </div>
+
+        </div>
+    </div>
+</section>
 
 {% include 'footer.html' %}

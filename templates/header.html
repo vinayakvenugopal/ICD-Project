@@ -1,114 +1,117 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <meta name="description" content="">
-        <meta name="author" content="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Medic Care Bootstrap 5 CSS Template</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        <!-- CSS FILES -->        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Medic Care Bootstrap 5 CSS Template</title>
 
-        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- CSS FILES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-        <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        <link href="{% static 'css/owl.theme.default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 
-        <link href="{% static 'css/templatemo-medic-care.css' %}" rel="stylesheet">
-<!--
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/owl.theme.default.min.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/templatemo-medic-care.css' %}" rel="stylesheet">
+    <!--
 
 TemplateMo 566 Medic Care
 
 https://templatemo.com/tm-566-medic-care
 
 -->
-    </head>
-    
-    <body id="top">
-    
-        <main>
+</head>
 
-            <nav class="navbar navbar-expand-lg bg-light fixed-top shadow-lg">
-                <div class="container">
-                    <a class="navbar-brand mx-auto d-lg-none" href="index.html">
-                        Medic Care
-                        <strong class="d-block">Health Specialist</strong>
-                    </a>
+<body id="top">
 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+    <main>
 
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav mx-auto">
-                            
-                            {% if request.user.is_superuser %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'view_patient' %}">Patient</a>
-                            </li>
-                            {% elif request.user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'view_patient' %}">Patient</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'add_feedback' %}">Feedback</a>
-                            </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'about' %}">About</a>
-                            </li>
+        <nav class="navbar navbar-expand-lg bg-light fixed-top shadow-lg">
+            <div class="container">
+                <a class="navbar-brand mx-auto d-lg-none" href="index.html">
+                    Medic Care
+                    <strong class="d-block">Health Specialist</strong>
+                </a>
 
-                            
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                            <a class="navbar-brand d-none d-lg-block" href="{% url 'home' %}">
-                                Medic Care
-                                <strong class="d-block">Health Specialist</strong>
-                            </a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto align-items-center">
 
-                            {% if request.user.is_superuser %}
-                            
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'hospital_staff_authorize' %}">Hospital Staff</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'feedback' %}">View Feedback</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'signout' %}">Logout</a>
-                            </li>
+                        {% if request.user.is_superuser %}
+                        <li class="nav-item">
+                            <span class="badge bg-primary px-3 py-2 me-2">ADMIN</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_patient' %}">Patient</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'hospital_staff_authorize' %}">Hospital Staff</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'feedback' %}">View Feedback</a>
+                        </li>
 
-                            
-                            {% elif request.user.is_authenticated %}
+                        {% elif request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="badge bg-secondary px-3 py-2 me-2">HOSPITAL STAFF</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_patient' %}">Patient</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_feedback' %}">Feedback</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                        </li>
+                        {% endif %}
 
-                            
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'signout' %}">Logout</a>
-                            </li>
-                            {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'signin' %}">Login</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'about' %}">About</a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'register' %}">Register</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
+                        <a class="navbar-brand d-none d-lg-block mx-3" href="{% url 'home' %}">
+                            MedCode
+                            <strong class="d-block">ICD Code Generator </strong>
+                        </a>
 
+                        {% if not request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signin' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    {% if request.user.is_authenticated %}
+                    <ul class="navbar-nav ms-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white px-4 mt-lg-0 mt-3" href="{% url 'signout' %}"
+                                style="border-radius: 20px;">Logout</a>
+                        </li>
+                    </ul>
+                    {% endif %}
                 </div>
-            </nav>
+
+            </div>
+        </nav>

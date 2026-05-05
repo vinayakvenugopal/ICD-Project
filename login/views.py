@@ -6,14 +6,44 @@ from .models import *
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from ml.predict import predict_icd
+
 from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 
 
 def home(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect('admin_home')
+        return redirect('staff_home')
     return render(request, "index.html")
+
+
+def admin_home(request):
+    if not request.user.is_superuser:
+        return redirect('home')
+    total_patients = Patient.objects.count()
+    pending_staff = User.objects.filter(status="pending").count()
+    total_feedback = Feedback.objects.count()
+    
+    context = {
+        'total_patients': total_patients,
+        'pending_staff': pending_staff,
+        'total_feedback': total_feedback,
+    }
+    return render(request, "admin_home.html", context)
+
+
+def staff_home(request):
+    if not request.user.is_authenticated or request.user.is_superuser:
+        return redirect('home')
+    total_patients = Patient.objects.count()
+    
+    context = {
+        'total_patients': total_patients,
+    }
+    return render(request, "staff_home.html", context)
 
 
 def register(request):
@@ -52,13 +82,13 @@ def signin(request):
             if user.is_superuser:
                 login(request, user)
                 messages.success(request, "Admin login successful")
-                return redirect('home')
+                return redirect('admin_home')
 
             # ✅ Normal user: check status
             elif user.status == "accepted":
                 login(request, user)
                 messages.success(request, "Login successful")
-                return redirect('home')
+                return redirect('staff_home')
 
             else:
                 messages.error(request, "Your account is pending approval")
@@ -194,11 +224,26 @@ def about(request):
 @csrf_exempt
 def icd_ajax_predict(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        description = data.get("description", "")
+        try:
+            # Lazy import to prevent heavy loading at module level
+            from ml.predict import predict_icd
+            import json
 
-        results = predict_icd(description)
-        return JsonResponse({"results": results})
+            data = json.loads(request.body)
+            description = data.get("description", "")
+
+            if not isinstance(description, str):
+                return JsonResponse({"error": "Description must be a string"}, status=400)
+
+            description = description.strip()
+            if not description:
+                return JsonResponse({"results": []})
+
+            results = predict_icd(description)
+            return JsonResponse({"results": results})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 

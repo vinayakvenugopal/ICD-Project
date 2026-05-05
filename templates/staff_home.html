@@ -1,0 +1,52 @@
+{% load static %}
+{% include 'header.html' %}
+
+<section class="hero" id="hero"
+    style="background: url('{% static 'images/slider/team-young-specialist-doctors-standing-corridor-hospital.jpg' %}') no-repeat center center; background-size: cover; padding: 100px 0;">
+    <div class="container text-center">
+        <div class="heroText bg-white p-5 shadow-lg d-inline-block rounded">
+            <h1 class="mb-3">Staff <span class="text-primary">Dashboard</span></h1>
+            <p class="lead mb-4">Patient record management and AI code prediction.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-12">
+                <h2 class="display-5">Hospital Staff Dashboard</h2>
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm text-center p-4 h-100">
+                    <i class="bi-plus-circle text-primary mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="h4">New Patient</h3>
+                    <p class="text-muted small">Register a new patient case</p>
+                    <a href="{% url 'add_patient' %}" class="btn btn-sm btn-primary mt-auto">Add Record</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm text-center p-4 h-100">
+                    <i class="bi-search text-info mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="h4">ICD Predict</h3>
+                    <p class="text-muted small">AI-driven code lookup</p>
+                    <a href="{% url 'view_patient' %}" class="btn btn-sm btn-info text-white mt-auto">Analyze Cases</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm text-center p-4 h-100">
+                    <i class="bi-journal-medical text-secondary mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="h2">{{ total_patients }}</h3>
+                    <p class="text-muted">Total Records</p>
+                    <a href="{% url 'view_patient' %}" class="btn btn-sm btn-outline-secondary mt-auto">Browse
+                        Records</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'footer.html' %}
