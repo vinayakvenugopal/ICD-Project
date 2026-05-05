@@ -22,6 +22,7 @@ class ICD10Detector:
         self.model_dir = os.path.join(os.path.dirname(__file__), "models", "weights")
         self.vocab_path = os.path.join(self.model_dir, "model_metadata.pkl")
         self.weight_path = os.path.join(self.model_dir, "bilstm_icd10.pth")
+        self.embeddings_path = os.path.join(self.model_dir, "description_embeddings.pt")
 
         print("Loading BiLSTM Encoder and Vocabulary...")
         with open(self.vocab_path, "rb") as f:
@@ -32,17 +33,24 @@ class ICD10Detector:
         self.model.load_state_dict(torch.load(self.weight_path, map_location=torch.device("cpu")))
         self.model.eval()
         
-        print(f"Pre-computing embeddings for {len(self.descriptions)} codes...")
-        with torch.no_grad():
-            batch_size = 512
-            all_embeddings = []
-            for i in range(0, len(self.descriptions), batch_size):
-                batch_texts = self.descriptions[i:i+batch_size]
-                encoded = [self.vocab.encode(t) for t in batch_texts]
-                tensor_input = torch.tensor(encoded)
-                embeddings = self.model(tensor_input)
-                all_embeddings.append(embeddings)
-            self.description_embeddings = torch.cat(all_embeddings, dim=0)
+        if os.path.exists(self.embeddings_path):
+            print("Loading cached ICD description embeddings...")
+            self.description_embeddings = torch.load(
+                self.embeddings_path,
+                map_location=torch.device("cpu"),
+            )
+        else:
+            print(f"Pre-computing embeddings for {len(self.descriptions)} codes...")
+            with torch.no_grad():
+                batch_size = 512
+                all_embeddings = []
+                for i in range(0, len(self.descriptions), batch_size):
+                    batch_texts = self.descriptions[i:i+batch_size]
+                    encoded = [self.vocab.encode(t) for t in batch_texts]
+                    tensor_input = torch.tensor(encoded)
+                    embeddings = self.model(tensor_input)
+                    all_embeddings.append(embeddings)
+                self.description_embeddings = torch.cat(all_embeddings, dim=0)
 
         self.medical_synonyms = {
             "heart attack": "myocardial infarction",

@@ -5,3 +5,4 @@ __pycache__/
 *.h5
 *.pt
 *.index
+!ml_service/src/models/weights/description_embeddings.pt
