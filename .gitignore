@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+
+# Large generated model artifacts. Store these outside Git.
+*.h5
+*.pt
+*.index
