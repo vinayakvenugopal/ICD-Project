@@ -43,8 +43,7 @@
                 <td>{{ i.date }}</td>
                 {% if not request.user.is_superuser %}
                 {% comment %} <td><a href="" class="btn btn-primary btn-sm">ICD</a></td> {% endcomment %}
-                <td><button class="btn btn-primary btn-sm icd-btn" data-description="{{ i.description }}"
-                    data-bs-toggle="modal" data-bs-target="#icdModal">
+                <td><button type="button" class="btn btn-primary btn-sm icd-btn" data-description="{{ i.description }}">
                     ICD
                   </button>
                 </td>
@@ -110,13 +109,18 @@
 
 
 <script>
-  document.querySelectorAll(".icd-btn").forEach(btn => {
-    btn.addEventListener("click", function () {
-      const description = this.dataset.description;
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest(".icd-btn");
+    if (!button) {
+      return;
+    }
+
+      const description = button.dataset.description;
       const modalElement = document.getElementById("icdModal");
 
       if (window.bootstrap && modalElement) {
-        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        modal.show();
       }
 
       document.getElementById("icd-loading").style.display = "block";
@@ -168,7 +172,6 @@
           document.getElementById("icd-error").textContent = error;
           document.getElementById("icd-error").style.display = "block";
         });
-    });
   });
 </script>
 
