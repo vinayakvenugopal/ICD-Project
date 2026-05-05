@@ -113,6 +113,11 @@
   document.querySelectorAll(".icd-btn").forEach(btn => {
     btn.addEventListener("click", function () {
       const description = this.dataset.description;
+      const modalElement = document.getElementById("icdModal");
+
+      if (window.bootstrap && modalElement) {
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+      }
 
       document.getElementById("icd-loading").style.display = "block";
       document.getElementById("icd-table").style.display = "none";
