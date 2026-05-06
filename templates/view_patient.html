@@ -26,11 +26,7 @@
                 <th scope="col">Gender</th>
                 <th scope="col">Description</th>
                 <th scope="col">Date</th>
-                {% if not request.user.is_superuser %}
                 <th scope="col">Action</th>
-                {% else %}
-                <th scope="col">Action</th>
-                {% endif %}
               </tr>
             </thead>
             <tbody>
@@ -42,8 +38,8 @@
                 <td>{{ i.description }}</td>
                 <td>{{ i.date }}</td>
                 {% if not request.user.is_superuser %}
-                {% comment %} <td><a href="" class="btn btn-primary btn-sm">ICD</a></td> {% endcomment %}
-                <td><button type="button" class="btn btn-primary btn-sm icd-btn" data-description="{{ i.description }}">
+                <td>
+                  <button type="button" class="btn btn-primary btn-sm icd-btn" data-description="{{ i.description }}">
                     ICD
                   </button>
                 </td>
@@ -53,15 +49,12 @@
                   <a href="{% url 'delete_patient' i.id %}" class="btn btn-danger btn-sm">Delete</a>
                 </td>
                 {% endif %}
-
-
               </tr>
               {% empty %}
               <tr>
                 <td colspan="6" class="text-center">No Data</td>
               </tr>
               {% endfor %}
-
             </tbody>
           </table>
 
@@ -107,84 +100,99 @@
 </div>
 
 
-
 <script>
-  document.addEventListener("click", function (event) {
-    const button = event.target.closest(".icd-btn");
-    if (!button) {
-      return;
+  function fetchICD(description, retryCount) {
+    retryCount = retryCount || 0;
+
+    var loadingEl = document.getElementById("icd-loading");
+    var loadingMsg = loadingEl.querySelector("p");
+    var tableEl = document.getElementById("icd-table");
+    var errorEl = document.getElementById("icd-error");
+    var bodyEl = document.getElementById("icd-result-body");
+
+    loadingEl.style.display = "block";
+    loadingMsg.textContent = retryCount > 0
+      ? "Model is warming up, retrying\u2026"
+      : "Predicting ICD codes...";
+    tableEl.style.display = "none";
+    errorEl.style.display = "none";
+    errorEl.textContent = "";
+    bodyEl.innerHTML = "";
+
+    fetch("{% url 'icd_ajax_predict' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ description: description })
+    })
+      .then(function(res) {
+        return res.text().then(function(text) {
+          try {
+            var data = JSON.parse(text);
+            data._httpStatus = res.status;
+            return data;
+          } catch (e) {
+            // Server returned HTML (gunicorn crash on cold start).
+            // Auto-retry once after 4 seconds — model should be loaded by then.
+            if (res.status === 500 && retryCount === 0) {
+              loadingMsg.textContent = "Server is warming up, retrying in 4s\u2026";
+              setTimeout(function() { fetchICD(description, 1); }, 4000);
+              return null;
+            }
+            throw new Error("Server error (" + res.status + "). Try again in a moment.");
+          }
+        });
+      })
+      .then(function(data) {
+        if (data === null) return; // retry pending, keep spinner
+
+        loadingEl.style.display = "none";
+
+        if (data.error) {
+          var msg = "Error: " + data.error;
+          if (data.detail) {
+            msg += "\n\nTraceback:\n" + data.detail;
+          }
+          errorEl.style.whiteSpace = "pre-wrap";
+          errorEl.textContent = msg;
+          errorEl.style.display = "block";
+          return;
+        }
+
+        tableEl.style.display = "table";
+        if (!data.results || data.results.length === 0) {
+          bodyEl.innerHTML = '<tr><td colspan="3" class="text-center">No ICD match found</td></tr>';
+          return;
+        }
+
+        data.results.forEach(function(item, index) {
+          bodyEl.innerHTML +=
+            "<tr><td>" + (index + 1) + "</td><td>" + item.icd_code +
+            "</td><td>" + item.confidence.toFixed(4) + "</td></tr>";
+        });
+      })
+      .catch(function(error) {
+        loadingEl.style.display = "none";
+        errorEl.textContent = String(error);
+        errorEl.style.display = "block";
+      });
+  }
+
+  document.addEventListener("click", function(event) {
+    var button = event.target.closest(".icd-btn");
+    if (!button) return;
+
+    var description = button.dataset.description;
+    var modalElement = document.getElementById("icdModal");
+
+    if (window.bootstrap && modalElement) {
+      var modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modal.show();
     }
 
-      const description = button.dataset.description;
-      const modalElement = document.getElementById("icdModal");
-
-      if (window.bootstrap && modalElement) {
-        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        modal.show();
-      }
-
-      document.getElementById("icd-loading").style.display = "block";
-      document.getElementById("icd-table").style.display = "none";
-      document.getElementById("icd-error").style.display = "none";
-      document.getElementById("icd-error").textContent = "";
-      document.getElementById("icd-result-body").innerHTML = "";
-
-      fetch("{% url 'icd_ajax_predict' %}", {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": "{{ csrf_token }}",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ description: description })
-      })
-        .then(res => {
-          return res.text().then(text => {
-            try {
-              return JSON.parse(text);
-            } catch (error) {
-              throw new Error(`Server returned ${res.status}: ${text.replace(/<[^>]*>/g, " ").trim().slice(0, 300)}`);
-            }
-          });
-        })
-        .then(data => {
-          document.getElementById("icd-loading").style.display = "none";
-          if (data.error) {
-            let errorMsg = "Error: " + data.error;
-            if (data.detail) {
-              errorMsg += "\n\nTraceback:\n" + data.detail;
-            }
-            document.getElementById("icd-error").style.whiteSpace = "pre-wrap";
-            document.getElementById("icd-error").textContent = errorMsg;
-            document.getElementById("icd-error").style.display = "block";
-            return;
-          }
-
-          document.getElementById("icd-table").style.display = "table";
-          if (!data.results || data.results.length === 0) {
-            document.getElementById("icd-result-body").innerHTML = `
-              <tr>
-                <td colspan="3" class="text-center">No ICD match found</td>
-              </tr>
-            `;
-            return;
-          }
-
-          data.results.forEach((item, index) => {
-            document.getElementById("icd-result-body").innerHTML += `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${item.icd_code}</td>
-            <td>${item.confidence.toFixed(4)}</td>
-        </tr>
-    `;
-          });
-
-        })
-        .catch(error => {
-          document.getElementById("icd-loading").style.display = "none";
-          document.getElementById("icd-error").textContent = error;
-          document.getElementById("icd-error").style.display = "block";
-        });
+    fetchICD(description, 0);
   });
 </script>
 

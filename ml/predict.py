@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import threading
 
 import pandas as pd
 
@@ -16,6 +17,10 @@ _detector = None
 _detector_error = None
 _fallback_df = None
 
+# Lock prevents two threads (background pre-warm + incoming request) from
+# loading the model simultaneously, which would double memory usage and OOM.
+_detector_lock = threading.Lock()
+
 
 def _format_code(raw_code):
     raw_code = str(raw_code)
@@ -27,16 +32,31 @@ def _load_detector():
     if os.environ.get("USE_NEURAL_ICD", "True").lower() != "true":
         return None
 
+    # Fast path — already loaded or permanently failed
     if _detector is not None or _detector_error is not None:
         return _detector
 
-    try:
-        from src.detector import ICD10Detector
+    # Non-blocking acquire: if the background pre-warm thread is already
+    # loading the model, don't block — just return None so this request
+    # uses the keyword fallback immediately (no double-load / OOM crash).
+    acquired = _detector_lock.acquire(blocking=False)
+    if not acquired:
+        print("[ICD] Model loading in progress — using keyword fallback for this request")
+        return None
 
+    try:
+        # Re-check inside the lock (another thread may have finished just now)
+        if _detector is not None or _detector_error is not None:
+            return _detector
+
+        from src.detector import ICD10Detector
         _detector = ICD10Detector(DATA_PATH)
+        print("[ICD] Neural detector loaded successfully.")
     except Exception as exc:
         _detector_error = exc
-        print(f"ICD neural detector unavailable, using fallback search: {exc}")
+        print(f"[ICD] Neural detector unavailable, using fallback: {exc}")
+    finally:
+        _detector_lock.release()
 
     return _detector
 
