@@ -30,7 +30,7 @@ class ICD10Detector:
             self.vocab = metadata['vocab']
             
         self.model = BiLSTMEncoder(vocab_size=len(self.vocab))
-        self.model.load_state_dict(torch.load(self.weight_path, map_location=torch.device("cpu")))
+        self.model.load_state_dict(torch.load(self.weight_path, map_location=torch.device("cpu"), weights_only=True))
         self.model.eval()
         
         if os.path.exists(self.embeddings_path):
@@ -38,6 +38,7 @@ class ICD10Detector:
             self.description_embeddings = torch.load(
                 self.embeddings_path,
                 map_location=torch.device("cpu"),
+                weights_only=False,
             )
         else:
             print(f"Pre-computing embeddings for {len(self.descriptions)} codes...")
@@ -138,13 +139,7 @@ class ICD10Detector:
             
         return final_list
         
-        # FINAL SORT: MATCH SCORE (Primary) -> NEURAL SIMILARITY (Secondary)
-        all_results.sort(key=lambda x: (x['match_score'], x['neural_similarity']), reverse=True)
-        final_list = all_results[:top_k]
-        for res in final_list:
-            res['reasoning'] = self.generate_reasoning(user_input, res)
-            
-        return final_list
+
 
     def generate_reasoning(self, user_input, result):
         reasoning = f"Matched '{user_input}' to '{result['description']}' through clinical term alignment ({result['match_score']} keywords). Total confidence {int(result['score']*100)}%."

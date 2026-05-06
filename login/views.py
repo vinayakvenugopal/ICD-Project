@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from .models import *
 import json
+import traceback
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -243,7 +244,9 @@ def icd_ajax_predict(request):
             return JsonResponse({"results": results})
 
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            tb = traceback.format_exc()
+            print(f"[icd_ajax_predict ERROR]\n{tb}")
+            return JsonResponse({"error": str(e), "detail": tb}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 

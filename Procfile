@@ -1,1 +1,1 @@
-web: gunicorn ICD.wsgi
+web: gunicorn ICD.wsgi --workers 1 --timeout 120 --log-level info

@@ -149,7 +149,12 @@
         .then(data => {
           document.getElementById("icd-loading").style.display = "none";
           if (data.error) {
-            document.getElementById("icd-error").textContent = data.error;
+            let errorMsg = "Error: " + data.error;
+            if (data.detail) {
+              errorMsg += "\n\nTraceback:\n" + data.detail;
+            }
+            document.getElementById("icd-error").style.whiteSpace = "pre-wrap";
+            document.getElementById("icd-error").textContent = errorMsg;
             document.getElementById("icd-error").style.display = "block";
             return;
           }
