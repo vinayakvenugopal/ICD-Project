@@ -29,6 +29,7 @@ urlpatterns = [
     path('delete_patient/<int:id>/', views.delete_patient, name='delete_patient'),
 
     path("icd/ajax/", views.icd_ajax_predict, name="icd_ajax_predict"),
+    path("ping/", views.ping, name="ping"),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

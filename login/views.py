@@ -222,14 +222,21 @@ def about(request):
 
 
 
+def ping(request):
+    """Diagnostic endpoint — no ML imports. Use to verify deployment."""
+    import sys
+    import django
+    return JsonResponse({
+        "status": "ok",
+        "python": sys.version,
+        "django": django.__version__,
+    })
+
+
 @csrf_exempt
 def icd_ajax_predict(request):
     if request.method == "POST":
         try:
-            # Lazy import to prevent heavy loading at module level
-            from ml.predict import predict_icd
-            import json
-
             data = json.loads(request.body)
             description = data.get("description", "")
 
@@ -239,6 +246,17 @@ def icd_ajax_predict(request):
             description = description.strip()
             if not description:
                 return JsonResponse({"results": []})
+
+            # Lazy import — keep ML libraries out of startup
+            try:
+                from ml.predict import predict_icd
+            except Exception as import_err:
+                tb = traceback.format_exc()
+                print(f"[icd_ajax_predict IMPORT ERROR]\n{tb}")
+                return JsonResponse(
+                    {"error": f"ML module import failed: {import_err}", "detail": tb},
+                    status=500,
+                )
 
             results = predict_icd(description)
             return JsonResponse({"results": results})
